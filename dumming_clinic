@@ -1,0 +1,51 @@
+# criar banco de dados clinico com fenotipos combinados 
+clinic <- select (emocemp_quali.exc, neurite_all, mielite_all, adem, romboencefalite, outros_clinic)
+# Descobrir quais combinaçoes existem para criar a logica de mais de 2 combinacoes 
+a <- expand(emocemp_quali.exc, nesting(neurite_all, mielite_all, adem, romboencefalite, outros_clinic))
+# Novas variáveis com as combinações
+clinic <- clinic %>% 
+  mutate(no_mielite=ifelse(neurite_all==1 & mielite_all==1 & adem==0 & romboencefalite==0 & outros_clinic==0,1,0)) %>% 
+  mutate(no_adem=ifelse(neurite_all==1 & adem==1 & mielite_all==0 & romboencefalite==0 & outros_clinic==0,1,0)) %>% 
+  mutate (no_outros=ifelse(neurite_all==1 & outros_clinic==1 & mielite_all==0 & adem==0 & romboencefalite==0,1,0)) %>% 
+  mutate (no_romboencefalite=ifelse(neurite_all==1 & romboencefalite==1 & mielite_all==0 & adem==0 & outros_clinic==0, 1,0)) %>% 
+  mutate (no_i =ifelse(neurite_all==1&mielite_all==0&adem==0&romboencefalite==0&outros_clinic==0, 1,0)) %>% 
+  mutate (mielite_romboencefalite=ifelse(mielite_all==1 & romboencefalite==1& neurite_all==0 & adem==0 & outros_clinic==0, 1,0)) %>% 
+  mutate (mielite_adem=ifelse(mielite_all==1 & adem==1 & neurite_all==0 & romboencefalite==0 & outros_clinic==0, 1,0)) %>% 
+  mutate (mielite_outros =ifelse(mielite_all==1&neurite_all==0&adem==0&romboencefalite==0&outros_clinic==1, 1,0)) %>% 
+  mutate (mielite_i =ifelse(mielite_all==1&neurite_all==0&adem==0&romboencefalite==0&outros_clinic==0, 1,0)) %>% 
+  mutate (outros_romboencefalite=ifelse(outros_clinic==1 & romboencefalite==1& mielite_all==0&neurite_all==0&adem==0, 1,0)) %>% 
+  mutate (outros_i =ifelse(outros_clinic==1&neurite_all==0&adem==0&romboencefalite==0&mielite_all==0, 1,0)) %>% 
+  mutate (outros_adem =ifelse(outros_clinic==1&neurite_all==0&adem==1&romboencefalite==0&mielite_all==0, 1,0)) %>% 
+  mutate (adem_i =ifelse(adem==1&neurite_all==0&mielite_all==0&romboencefalite==0&outros_clinic==0, 1,0)) %>% 
+  mutate (romboencefalite_i =ifelse(romboencefalite==1&neurite_all==0&adem==0&mielite_all==0&outros_clinic==0, 1,0)) %>% 
+  mutate (romb_adem =ifelse(outros_clinic==0&neurite_all==0&adem==1&romboencefalite==1&mielite_all==0, 1,0)) %>% 
+  mutate (mielite_romb_out =ifelse(outros_clinic==1&neurite_all==0&adem==1&romboencefalite==1&mielite_all==1, 1,0)) %>% 
+  mutate (mielite_romb_adem =ifelse(outros_clinic==0&neurite_all==0&adem==1&romboencefalite==1&mielite_all==1, 1,0)) %>% 
+  mutate (no_adem_out =ifelse(outros_clinic==1&neurite_all==1&adem==1&romboencefalite==0&mielite_all==0, 1,0)) %>% 
+  mutate (no_adem_ro_ou =ifelse(outros_clinic==1&neurite_all==1&adem==1&romboencefalite==1&mielite_all==0, 1,0)) %>% 
+  mutate (no_mielite_adem =ifelse(outros_clinic==0&neurite_all==1&adem==1&romboencefalite==0&mielite_all==1, 1,0)) %>% 
+  mutate (mi_adem_ro_ou =ifelse(outros_clinic==1&neurite_all==0&adem==1&romboencefalite==1&mielite_all==1, 1,0))
+
+clinic_corr <- select(clinic, no_mielite, no_adem, no_outros, no_romboencefalite, no_i, mielite_romboencefalite, mielite_adem, mielite_outros, mielite_i, outros_romboencefalite, outros_i, outros_adem, adem_i, romboencefalite_i, romb_adem, mielite_romb_out,mielite_romb_adem, no_adem_out, no_adem_ro_ou, no_mielite_adem, mi_adem_ro_ou)
+
+clinic_corr$no_mielite <- as.factor (clinic_corr$no_mielite)
+clinic_corr$no_adem <- as.factor (clinic_corr$no_adem)
+clinic_corr$no_outros <- as.factor (clinic_corr$no_outros)
+clinic_corr$no_romboencefalite <- as.factor (clinic_corr$no_romboencefalite)
+clinic_corr$no_i <- as.factor (clinic_corr$no_i)
+clinic_corr$mielite_romboencefalite <- as.factor (clinic_corr$mielite_romboencefalite)
+clinic_corr$mielite_adem <- as.factor (clinic_corr$mielite_adem)
+clinic_corr$mielite_outros <- as.factor (clinic_corr$mielite_outros)
+clinic_corr$mielite_i <- as.factor (clinic_corr$mielite_i)
+clinic_corr$outros_romboencefalite <- as.factor (clinic_corr$outros_romboencefalite)
+clinic_corr$outros_i <- as.factor (clinic_corr$outros_i)
+clinic_corr$outros_adem <- as.factor (clinic_corr$outros_adem)
+clinic_corr$adem_i <- as.factor (clinic_corr$adem_i)
+clinic_corr$romboencefalite_i <- as.factor (clinic_corr$romboencefalite_i)
+clinic_corr$romb_adem <- as.factor (clinic_corr$romb_adem)
+clinic_corr$mielite_romb_out <- as.factor (clinic_corr$mielite_romb_out)
+clinic_corr$mielite_romb_adem <- as.factor (clinic_corr$mielite_romb_adem)
+clinic_corr$no_adem_out <- as.factor (clinic_corr$no_adem_out)
+clinic_corr$no_adem_ro_ou <- as.factor (clinic_corr$no_adem_ro_ou)
+clinic_corr$no_mielite_adem <- as.factor (clinic_corr$no_mielite_adem)
+clinic_corr$mi_adem_ro_ou <- as.factor (clinic_corr$mi_adem_ro_ou)
